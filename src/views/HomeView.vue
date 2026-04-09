@@ -9,12 +9,13 @@ interface Url {
 }
 
 const request = ref<Url>({
-  long_url: 'https://expressjs.com/en/starter/generator.html',
+  long_url: '',
 })
 
 const result = ref<Url>({ long_url: 'abc', short_url: 'alias', expire: new Date() })
 
 async function submitUrl() {
+  clearErrorMessage()
   isVisibleResult.value = false
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL
@@ -28,6 +29,10 @@ async function submitUrl() {
   })
 
   if (!response.ok) {
+    // handle error by showing it
+    const { error } = await response.json()
+    errorMessage.value = error
+
     throw new Error(`HTTP error! Status: ${response.status}`) // Check if request was successful
   }
 
@@ -38,10 +43,38 @@ async function submitUrl() {
 
 const resultShortUrl = computed(() => {
   const serverBaseUrl = import.meta.env.VITE_API_BASE_URL
-  return `${serverBaseUrl}/urls/${result.value?.short_url}`
+  return `${serverBaseUrl}/${result.value?.short_url}`
 })
 
 const isVisibleResult = ref(false)
+
+function copyShortUrl() {
+  if (isVisibleTick.value) return
+
+  // 1. Get the text from the div
+  const text = document.getElementById('resultShortUrl')?.innerText ?? ''
+
+  // 2. Use the Clipboard API to write text
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      isVisibleTick.value = true
+      setTimeout(() => {
+        isVisibleTick.value = false
+      }, 3000)
+    })
+    .catch((err) => {
+      console.error('Failed to copy: ', err)
+    })
+}
+
+const isVisibleTick = ref(false)
+
+const errorMessage = ref('')
+
+function clearErrorMessage() {
+  errorMessage.value = ''
+}
 </script>
 
 <template>
@@ -57,6 +90,7 @@ const isVisibleResult = ref(false)
               type="text"
               name="long-url"
               id="longUrl"
+              @input="clearErrorMessage"
               v-model="request.long_url"
               placeholder="https://portal.azure.com/#allservices/category/All"
             />
@@ -66,16 +100,18 @@ const isVisibleResult = ref(false)
             <input
               type="text"
               name="short-url"
+              @input="clearErrorMessage"
               id="shortUrl"
               v-model="request.short_url"
-              placeholder="https://sho.ly/abc => abc"
+              placeholder="azure-portal"
             />
           </div>
           <div class="form-group">
-            <div class="label">Expiry date from now (Optional)</div>
+            <div class="label">Expiry dates from now (Optional)</div>
             <input
               type="text"
               name="expire"
+              @input="clearErrorMessage"
               id="expire"
               placeholder="7"
               v-model="request.expire_in_number"
@@ -84,16 +120,32 @@ const isVisibleResult = ref(false)
           <div class="form-group">
             <button @click="submitUrl">Get link</button>
           </div>
+          <div class="error-message">{{ errorMessage }}</div>
         </div>
       </div>
 
       <div class="result-wrapper wrapper" v-if="isVisibleResult">
         <div class="short-link-result">
           <span>Created successfully:</span>
-          <div class="value">{{ resultShortUrl }}</div>
-          <div class="copy-button"><i class="fa-regular fa-clone"></i></div>
+          <div class="value" id="resultShortUrl">{{ resultShortUrl }}</div>
+          <div class="copy-button" @click="copyShortUrl">
+            <span v-if="isVisibleTick" class="copied">Copied</span>
+            <i v-else class="fa-regular fa-clone"></i>
+          </div>
         </div>
-        <div class="expiry-date">Expiry date: {{ result.expire }}</div>
+        <div class="expiry-date">
+          Expiry date:
+          {{
+            new Date(result.expire).toLocaleString('vi-vn', {
+              day: '2-digit',
+              month: '2-digit',
+              year: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })
+          }}
+        </div>
       </div>
     </section>
   </main>
@@ -139,18 +191,20 @@ main {
 }
 
 input {
-  padding: 8px 12px;
+  padding: 12px;
   border-radius: 4px;
-  /* border: 2px dashed #333; */
-  border: 1px solid #333;
+  border: 2px dashed #333;
+  /* border: 1px solid #333; */
 }
 
 button {
   background-color: #e76f2e;
   color: #fff;
-  padding: 8px;
+  padding: 12px;
   border-radius: 6px;
   cursor: pointer;
+  border: 2px solid purple;
+  margin-top: 12px;
 }
 
 .wrapper {
@@ -165,11 +219,26 @@ button {
 
 .copy-button {
   cursor: pointer;
+  margin-right: 6px;
 }
 
 .short-link-result {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.copied {
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  padding: 0 4px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 6px;
 }
 </style>
