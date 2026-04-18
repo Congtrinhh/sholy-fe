@@ -91,7 +91,7 @@ const expiryDateResult = computed(() => {
   <main>
     <section id="main">
       <div class="form-wrapper wrapper">
-        <div class="title">Create short link with Sho.ly</div>
+        <div class="title">Create short link with Sholy</div>
 
         <div class="form-parent">
           <div class="form-group">
@@ -153,6 +153,15 @@ const expiryDateResult = computed(() => {
 </template>
 
 <style>
+#main {
+  flex-direction: column;
+  gap: 40px;
+  /* width: 60%; */
+  max-width: 600px;
+  display: flex;
+  margin: 0 16px;
+}
+
 main {
   display: flex;
   align-items: center;
@@ -160,14 +169,6 @@ main {
   width: 100vw;
   height: 100vh;
   background: #f5e9d8;
-}
-
-#main {
-  display: flex;
-  flex-direction: column;
-  width: 60%;
-  max-width: 600px;
-  gap: 40px;
 }
 
 .form-wrapper {
@@ -228,6 +229,7 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-direction: column;
 }
 
 .copied {
@@ -242,5 +244,28 @@ button {
 .error-message {
   color: red;
   margin-top: 6px;
+}
+
+#resultShortUrl {
+  max-width: calc(100vw - 42px);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 576px) {
+  #main {
+    width: 60%;
+    max-width: 600px;
+  }
+
+  .short-link-result {
+    flex-direction: row;
+  }
+
+  #resultShortUrl {
+    max-width: unset;
+  }
 }
 </style>
