@@ -75,6 +75,16 @@ const errorMessage = ref('')
 function clearErrorMessage() {
   errorMessage.value = ''
 }
+const expiryDateResult = computed(() => {
+  return new Date(result.value.expire as Date).toLocaleString('vi-vn', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+})
 </script>
 
 <template>
@@ -135,16 +145,7 @@ function clearErrorMessage() {
         </div>
         <div class="expiry-date">
           Expiry date:
-          {{
-            new Date(result.expire).toLocaleString('vi-vn', {
-              day: '2-digit',
-              month: '2-digit',
-              year: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            })
-          }}
+          {{ expiryDateResult }}
         </div>
       </div>
     </section>
