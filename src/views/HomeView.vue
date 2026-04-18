@@ -205,16 +205,17 @@ button {
   cursor: pointer;
   border: 2px solid purple;
   margin-top: 12px;
+  font-weight: 700;
 }
 
 .wrapper {
   padding: 24px;
-  border: 1px solid;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   background: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .copy-button {
