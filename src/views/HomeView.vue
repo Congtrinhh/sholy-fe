@@ -93,7 +93,7 @@ const expiryDateResult = computed(() => {
       <div class="form-wrapper wrapper">
         <div class="title">Create short link with Sholy</div>
 
-        <div class="form-parent">
+        <form class="form-parent">
           <div class="form-group">
             <div class="label">Long url (*)</div>
             <input
@@ -133,7 +133,7 @@ const expiryDateResult = computed(() => {
           </div>
           <div class="error-message">{{ errorMessage }}</div>
         </div>
-      </div>
+      </form>
 
       <div class="result-wrapper wrapper" v-if="isVisibleResult">
         <div class="short-link-result">
