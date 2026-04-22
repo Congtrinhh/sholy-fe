@@ -95,11 +95,12 @@ const expiryDateResult = computed(() => {
 
         <div class="form-parent">
           <div class="form-group">
-            <div class="label">Long url</div>
+            <div class="label">Long url (*)</div>
             <input
               type="text"
               name="long-url"
               id="longUrl"
+              required
               @input="clearErrorMessage"
               v-model="request.long_url"
               placeholder="https://portal.azure.com/#allservices/category/All"
